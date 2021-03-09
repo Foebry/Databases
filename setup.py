@@ -2,7 +2,7 @@ from setuptools import setup
 setup(
     name = 'Databases',
     version = 1.0,
-    packages=[],,
+    packages=[],
     requirements = [
         'git+https://github.com/Foebry/Logger.git#egg=Logger',
         'mysql-connector'],
