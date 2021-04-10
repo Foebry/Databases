@@ -1,4 +1,7 @@
 TODO.txt 
 __pycache__ 
-/Logs/* 
+/databases/Logs/* 
 *.log 
+main.py
+config.py
+
