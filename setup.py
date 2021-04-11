@@ -5,7 +5,7 @@ from setuptools import setup
 
 here = os.path.abspath(os.path.dirname(__file__))
 
-packages = ['wow']
+packages = ['databases']
 
 requires = [
     'Logger @ git+https://github.com/Foebry/Logger.git#egg=Logger',
