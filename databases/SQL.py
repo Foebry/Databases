@@ -1,19 +1,19 @@
 """SQL database functionality"""
 
-import mysql.connector
-
 class SQL:
     """SQL database class"""
 
-    def __init__(self, data):
+    def __init__(self, data, logger):
         """SQL database constructor"""
         self.user = data['user']
         self.password = data['password']
         self.host = data['host']
         self.schema = data['schema']
 
-    def connect(self):
+    def connect(self, logger):
         """SQL database connecting method"""
+        import mysql.connector
+
         connection = mysql.connector.connect(
             user=self.user,
             password=self.password,
@@ -23,13 +23,13 @@ class SQL:
         )
         return connection
 
-    def get(self, query, all=False):
+    def get(self, query, logger, all=False):
         """SQL database SELECT querries"""
 
         # Single values
-        connection = self.connect()
+        connection = self.connect(logger)
         cursor = connection.cursor()
-        cursor.execute(query)
+        cursor.execute(query, logger)
 
         if all: data = cursor.fetchall()
         else: data = cursor.fetchone()
@@ -41,20 +41,50 @@ class SQL:
 
         # All values
 
-    def write(self, query):
+    def write(self, query, logger):
         """SQL database INSERT querries"""
 
-        connection = self.connect()
+        connection = self.connect(logger)
         cursor = connection.cursor()
-        cursor.execute(query)
-        connection.commit()
-        connection.close()
+        try:
+            cursor.execute(query, logger)
+            connection.commit()
+            connection.close()
+            return True
+        except Exception as E:
+            self.HandleException(E, query, logger)
+            connection.close()
+            return False
 
-    def execute(self, query):
+
+    def update(self, query, logger):
+        """SQL database INSERT querries"""
+
+        connection = self.connect(logger)
+        cursor = connection.cursor()
+        try:
+            cursor.execute(query, logger)
+            connection.commit()
+            connection.close()
+            return True
+        except Exception as E:
+            self.HandleException(E, query, logger)
+            connection.close()
+            return False
+
+
+    def execute(self, query, logger):
         """SQL database other querries"""
 
-        connection = self.connect()
+        connection = self.connect(logger)
         cursor = connection.cursor()
-        cursor.execute(query)
+        cursor.execute(query, logger)
         connection.commit()
         connection.close()
+
+
+    def HandleException(self, exception, query, logger):
+        import mysql.connector
+
+        if type(exception) == mysql.connector.OperationalError: pass
+        else: logger.log(msg=query, err=type(exception))

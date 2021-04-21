@@ -1,7 +1,13 @@
+import os
+import sys
 
-from databases.SQL import SQL
 
 class Database:
-    def __new__(self, data):
-        if data["type"] == "SQL":
-            return SQL(data)
+    def __new__(self, data, logger):
+        if data["type"] == "MySQL":
+
+            try: import mysql
+            except: os.system("pip install mysql-connector")
+
+            from databases.SQL import SQL
+            return SQL(data, logger)
