@@ -3,12 +3,13 @@
 class SQL:
     """SQL database class"""
 
-    def __init__(self, data, logger):
+    def __init__(self, data, logger, test=False):
         """SQL database constructor"""
         self.user = data['user']
         self.password = data['password']
         self.host = data['host']
         self.schema = data['schema']
+        if test: self.schema = data['schema-test']
 
     def connect(self, logger):
         """SQL database connecting method"""
