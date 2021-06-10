@@ -1,7 +1,7 @@
 __title__ = 'databases'
 __description__ = ''
 __url__ = ''
-__version__ = '1.2'
+__version__ = '1.2.1'
 __author__ = 'Foebry'
 __author_email__ = 'rain_fabry@hotmail.com'
 __license__ = ''
