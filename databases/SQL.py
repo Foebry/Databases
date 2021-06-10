@@ -8,8 +8,10 @@ class SQL:
         self.user = data['user']
         self.password = data['password']
         self.host = data['host']
+        self.restraint = 10000
         self.schema = data['schema']
         if test: self.schema = data['schema-test']
+        if "restraint" in data: self.restraint = data["restraint"]
 
     def connect(self, logger):
         """SQL database connecting method"""
