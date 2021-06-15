@@ -10,10 +10,11 @@ class SQL:
         self.host = data['host']
         self.restraint = 10000
         self.schema = data['schema']
+        self.logger = logger
         if test: self.schema = data['schema-test']
         if "restraint" in data: self.restraint = data["restraint"]
 
-    def connect(self, logger):
+    def connect(self):
         """SQL database connecting method"""
         import mysql.connector
 
@@ -26,13 +27,13 @@ class SQL:
         )
         return connection
 
-    def get(self, query, logger, all=False):
+    def get(self, query, all=False):
         """SQL database SELECT querries"""
 
         # Single values
-        connection = self.connect(logger)
+        connection = self.connect()
         cursor = connection.cursor()
-        cursor.execute(query, logger)
+        cursor.execute(query)
 
         if all: data = cursor.fetchall()
         else: data = cursor.fetchone()
@@ -42,52 +43,58 @@ class SQL:
         return data
 
 
-        # All values
 
-    def write(self, query, logger):
+    def write(self, query):
         """SQL database INSERT querries"""
 
-        connection = self.connect(logger)
+        connection = self.connect()
         cursor = connection.cursor()
         try:
-            cursor.execute(query, logger)
+            cursor.execute(query)
             connection.commit()
             connection.close()
             return True
         except Exception as E:
-            self.HandleException(E, query, logger)
+            self.handleException(E, query)
             connection.close()
             return False
 
 
-    def update(self, query, logger):
+    def update(self, query):
         """SQL database INSERT querries"""
 
-        connection = self.connect(logger)
+        connection = self.connect()
         cursor = connection.cursor()
         try:
-            cursor.execute(query, logger)
+            cursor.execute(query)
             connection.commit()
             connection.close()
             return True
         except Exception as E:
-            self.HandleException(E, query, logger)
+            self.handleException(E, query)
             connection.close()
             return False
 
 
-    def execute(self, query, logger):
+    def execute(self, query):
         """SQL database other querries"""
 
-        connection = self.connect(logger)
+        connection = self.connect()
         cursor = connection.cursor()
-        cursor.execute(query, logger)
-        connection.commit()
+        cursor.execute(query)
         connection.close()
 
 
-    def HandleException(self, exception, query, logger):
+    def handleException(self, exception, query):
         import mysql.connector
 
         if type(exception) == mysql.connector.OperationalError: pass
-        else: logger.log(msg=query, err=type(exception))
+        else: self.logger.log(msg=query, err=type(exception))
+
+    def optimize(self):
+        tables = self.get("show tables", all=True)
+        for table in tables:
+            print("Lost internet connection. Optimizing {}".format(table[0]))
+            self.execute("optimize table {}".format(table[0]))
+            print(" "*100, end ="\r")
+        self.logger.log(msg="Optimized database")
